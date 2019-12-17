@@ -1,0 +1,29 @@
+using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Net;
+
+namespace Hyperaura_Launcher
+{
+    class Authentication
+    {
+        public static string GetToken(string username, string pwd, string tknclient)
+        {
+            HttpWebRequest api = (HttpWebRequest)WebRequest.Create("https://authserver.mojang.com/authenticate");
+            api.ContentType = "application/json";
+            api.Method = "POST";
+
+            using (StreamWriter sw = new StreamWriter(api.GetRequestStream()))
+            {
+                sw.Write("{\"agent\":{\"name\":\"Minecraft\",\"version\":1},\"username\":\"" + username + "\",\"password\":\"" + pwd + "\",\"clientToken\":\"" + tknclient + "\"}");
+                sw.Flush();
+            }
+
+            HttpWebResponse rsp = (HttpWebResponse)api.GetResponse();
+            using (StreamReader sr = new StreamReader(rsp.GetResponseStream())) return sr.ReadToEnd();
+        }
+    }
+}
